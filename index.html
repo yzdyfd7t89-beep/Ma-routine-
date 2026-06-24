@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Routine">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAADsQAAA7EB9YPtSQAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZxivwC8AAAQtSURBVHic7dAxAQAAAMKg9U9tCy+gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAMBuAABHgAAAABJRU5ErkJggg==">
+<title>Ma Routine — Christian</title>
+<style>
+  /* System fonts — 100% offline, optimisées iPhone */
+
+  :root {
+    --font-main: -apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    --font-mono: 'SF Mono', ui-monospace, 'Courier New', monospace;
+    --bg: #0f0f0f;
+    --card: #1a1a1a;
+    --card2: #222222;
+    --accent: #C8F550;
+    --accent2: #FF6B35;
+    --text: #F0EDE6;
+    --muted: #888;
+    --border: #2a2a2a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-main);
+    min-height: 100vh;
+    padding: 0 0 60px 0;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: calc(60px + env(safe-area-inset-bottom));
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0f0f0f 0%, #1a2a0a 100%);
+    padding: 36px 20px 28px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .hero-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .hero h1 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 6px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero-sub {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* DAY SELECTOR */
+  .day-nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 16px 16px 0;
+    scrollbar-width: none;
+  }
+  .day-nav::-webkit-scrollbar { display: none; }
+  .day-btn {
+    flex-shrink: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.18s;
+    min-width: 64px;
+  }
+  .day-btn .day-name {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .day-btn .day-emoji { font-size: 18px; display: block; margin-bottom: 2px; }
+  .day-btn .day-type { font-size: 10px; color: var(--muted); }
+  .day-btn.active, .day-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .day-btn.active .day-name,
+  .day-btn.active .day-type,
+  .day-btn:hover .day-name,
+  .day-btn:hover .day-type { color: #0f0f0f; }
+
+  /* CONTENT */
+  .content { padding: 16px; }
+
+  .section-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+
+  /* TIMELINE */
+  .timeline { display: flex; flex-direction: column; gap: 10px; }
+  .time-block {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 14px;
+    border-left: 3px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .time-block.green { border-left-color: var(--accent); }
+  .time-block.orange { border-left-color: var(--accent2); }
+  .time-block.blue { border-left-color: #5BC4FF; }
+  .time-block.muted { border-left-color: #444; }
+  .tb-time {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent);
+    min-width: 48px;
+    padding-top: 2px;
+  }
+  .time-block.orange .tb-time { color: var(--accent2); }
+  .time-block.blue .tb-time { color: #5BC4FF; }
+  .time-block.muted .tb-time { color: var(--muted); }
+  .tb-body {}
+  .tb-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .tb-detail {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .tb-emoji { font-size: 18px; min-width: 24px; margin-top: 1px; }
+
+  /* EXERCISE LIST */
+  .ex-list { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+  .ex-item {
+    background: var(--card2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .ex-name { font-size: 13px; font-weight: 500; }
+  .ex-sets {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: rgba(200,245,80,0.08);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  /* FOOD CARD */
+  .food-grid { display: flex; flex-direction: column; gap: 8px; }
+  .food-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .food-icon { font-size: 24px; min-width: 36px; text-align: center; }
+  .food-info {}
+  .food-meal { font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  .food-desc { font-size: 13px; font-weight: 500; line-height: 1.4; }
+
+  /* HAND METHOD */
+  .hand-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .hand-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+  .hand-emoji { font-size: 28px; display: block; margin-bottom: 6px; }
+  .hand-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .hand-value { font-size: 13px; font-weight: 600; }
+
+  /* WATCH ALERTS */
+  .alert-list { display: flex; flex-direction: column; gap: 8px; }
+  .alert-item {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .alert-time {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+    min-width: 50px;
+  }
+  .alert-desc { font-size: 13px; }
+
+  /* WEEK VIEW */
+  .week-grid { display: flex; flex-direction: column; gap: 6px; }
+  .week-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .week-day {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 34px;
+    text-transform: uppercase;
+  }
+  .week-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .week-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--accent);
+  }
+  .week-fill.orange { background: var(--accent2); }
+  .week-fill.muted { background: #444; }
+  .week-label { font-size: 12px; color: var(--text); min-width: 100px; text-align: right; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    padding: 16px 16px 0;
+  }
+  .tab-btn {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 6px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    font-size: 12px;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .tab-btn.active {
+    background: var(--accent);
+    color: #0f0f0f;
+    font-weight: 600;
+    border-color: var(--accent);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* TIPS */
+  .tip-box {
+    background: rgba(200,245,80,0.06);
+    border: 1px solid rgba(200,245,80,0.2);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    margin-top: 8px;
+  }
+  .tip-box strong { color: var(--accent); }
+
+  /* REST */
+  .rest-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+  }
+  .rest-emoji { font-size: 48px; margin-bottom: 12px; display: block; }
+  .rest-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .rest-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- BANNIÈRE INSTALLATION -->
+<div id="install-banner" style="background:#C8F550;color:#0f0f0f;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;">
+  <span>📲 Ajouter à l'écran d'accueil</span>
+  <button onclick="showInstallHelp()" style="background:#0f0f0f;color:#C8F550;border:none;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;cursor:pointer">Comment ?</button>
+  <button onclick="document.getElementById('install-banner').style.display='none'" style="background:none;border:none;font-size:18px;cursor:pointer;padding:0 4px;">✕</button>
+</div>
+
+<!-- POPUP INSTRUCTIONS -->
+<div id="install-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:#1a1a1a;border-radius:20px;padding:28px 24px;margin:20px;border:1px solid #2a2a2a;max-width:340px;">
+    <div style="font-size:22px;font-weight:700;color:#C8F550;margin-bottom:16px;">Installer l'app 📲</div>
+    <div style="font-size:14px;color:#F0EDE6;line-height:1.8;">
+      <div style="margin-bottom:10px;">1️⃣ Ouvre ce fichier dans <strong>Safari</strong></div>
+      <div style="margin-bottom:10px;">2️⃣ Appuie sur le bouton <strong>Partager</strong> <span style="background:#2a2a2a;padding:2px 6px;border-radius:4px;">⬆</span></div>
+      <div style="margin-bottom:10px;">3️⃣ Choisis <strong>« Sur l'écran d'accueil »</strong></div>
+      <div style="margin-bottom:20px;">4️⃣ Appuie sur <strong>Ajouter</strong> ✅</div>
+      <div style="font-size:12px;color:#888;">⚠️ Fonctionne uniquement depuis Safari (pas Chrome ni Firefox)</div>
+    </div>
+    <button onclick="document.getElementById('install-popup').style.display='none'" style="width:100%;background:#C8F550;color:#0f0f0f;border:none;border-radius:10px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;">OK, compris !</button>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-label">Programme 12 mois</div>
+  <h1>Ta routine,<br><span>Christian</span></h1>
+  <div class="hero-sub">1,89m · 105kg · Callisthénie + Salle · Recomposition</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('semaine')">📅 Semaine</button>
+  <button class="tab-btn" onclick="switchTab('jour')">☀️ Jour</button>
+  <button class="tab-btn" onclick="switchTab('alim')">🍽️ Alim</button>
+  <button class="tab-btn" onclick="switchTab('montre')">⌚ Montre</button>
+  <button class="tab-btn" onclick="switchTab('suivi')">📊 Suivi</button>
+</div>
+
+<!-- TAB : SEMAINE -->
+<div id="tab-semaine" class="tab-content active">
+  <div class="content">
+    <div class="section-title">Vue de la semaine</div>
+    <div class="week-grid">
+      <div class="week-row" onclick="showDay(0)" style="cursor:pointer">
+        <div class="week-day">LUN</div>
+        <div class="week-bar"><div class="week-fill" style="width:90%"></div></div>
+        <div class="week-label">💪 Haut du corps</div>
+      </div>
+      <div class="week-row" onclick="showDay(1)" style="cursor:pointer">
+        <div class="week-day">MAR</div>
+        <div class="week-bar"><div class="week-fill orange" style="width:35%"></div></div>
+        <div class="week-label">🔥 Mini-séance</div>
+      </div>
+      <div class="week-row" onclick="showDay(2)" style="cursor:pointer">
+        <div class="week-day">MER</div>
+        <div class="week-bar"><div class="week-fill" style="width:90%"></div></div>
+        <div class="week-label">💪 Bas du corps</div>
+      </div>
+      <div class="week-row" onclick="showDay(3)" style="cursor:pointer">
+        <div class="week-day">JEU</div>
+        <div class="week-bar"><div class="week-fill orange" style="width:70%"></div></div>
+        <div class="week-label">🏋🏾 Salle / Marche</div>
+      </div>
+      <div class="week-row" onclick="showDay(4)" style="cursor:pointer">
+        <div class="week-day">VEN</div>
+        <div class="week-bar"><div class="week-fill" style="width:90%"></div></div>
+        <div class="week-label">💪 Full body</div>
+      </div>
+      <div class="week-row" onclick="showDay(5)" style="cursor:pointer">
+        <div class="week-day">SAM</div>
+        <div class="week-bar"><div class="week-fill orange" style="width:70%"></div></div>
+        <div class="week-label">🏋🏾 Salle / Léger</div>
+      </div>
+      <div class="week-row" onclick="showDay(6)" style="cursor:pointer">
+        <div class="week-day">DIM</div>
+        <div class="week-bar"><div class="week-fill muted" style="width:15%"></div></div>
+        <div class="week-label">😴 Repos complet</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:24px">Phases sur 12 mois</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="time-block green">
+        <div class="tb-time">M1-3</div>
+        <div class="tb-body">
+          <div class="tb-title">Phase 1 — Fondation</div>
+          <div class="tb-detail">Apprendre les mouvements. Installer la routine. Ne pas rater une semaine.</div>
+        </div>
+      </div>
+      <div class="time-block orange">
+        <div class="tb-time">M4-6</div>
+        <div class="tb-body">
+          <div class="tb-title">Phase 2 — Intensité</div>
+          <div class="tb-detail">Plus de volume. Variantes plus dures. Pompes déclinées, fentes sautées.</div>
+        </div>
+      </div>
+      <div class="time-block blue">
+        <div class="tb-time">M7-9</div>
+        <div class="tb-body">
+          <div class="tb-title">Phase 3 — Force</div>
+          <div class="tb-detail">Pistol squat, archer push-up, L-sit. Tu commences à impressionner.</div>
+        </div>
+      </div>
+      <div class="time-block muted">
+        <div class="tb-time">M10-12</div>
+        <div class="tb-body">
+          <div class="tb-title">Phase 4 — Performance</div>
+          <div class="tb-detail">Tractions, muscle-up, handstand wall. Le corps que tu vises.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB : MON JOUR -->
+<div id="tab-jour" class="tab-content">
+  <div class="content">
+
+    <!-- Day selector -->
+    <div class="section-title">Choisis ton jour</div>
+    <div class="day-nav">
+      <div class="day-btn active" onclick="showDay(0)">
+        <span class="day-emoji">💪</span>
+        <span class="day-name">Lun</span>
+        <span class="day-type">Haut</span>
+      </div>
+      <div class="day-btn" onclick="showDay(1)">
+        <span class="day-emoji">🔥</span>
+        <span class="day-name">Mar</span>
+        <span class="day-type">Mini</span>
+      </div>
+      <div class="day-btn" onclick="showDay(2)">
+        <span class="day-emoji">💪</span>
+        <span class="day-name">Mer</span>
+        <span class="day-type">Bas</span>
+      </div>
+      <div class="day-btn" onclick="showDay(3)">
+        <span class="day-emoji">🏋🏾</span>
+        <span class="day-name">Jeu</span>
+        <span class="day-type">Salle</span>
+      </div>
+      <div class="day-btn" onclick="showDay(4)">
+        <span class="day-emoji">💪</span>
+        <span class="day-name">Ven</span>
+        <span class="day-type">Full</span>
+      </div>
+      <div class="day-btn" onclick="showDay(5)">
+        <span class="day-emoji">🏋🏾</span>
+        <span class="day-name">Sam</span>
+        <span class="day-type">Salle</span>
+      </div>
+      <div class="day-btn" onclick="showDay(6)">
+        <span class="day-emoji">😴</span>
+        <span class="day-name">Dim</span>
+        <span class="day-type">Repos</span>
+      </div>
+    </div>
+
+    <div id="day-content" class="section-title" style="margin-top:20px"></div>
+    <div id="day-timeline"></div>
+    <div id="day-exercises"></div>
+
+  </div>
+</div>
+
+<!-- TAB : ALIMENTATION -->
+<div id="tab-alim" class="tab-content">
+  <div class="content">
+
+    <div class="section-title">La méthode de la main</div>
+    <div class="hand-grid">
+      <div class="hand-card">
+        <span class="hand-emoji">🤜</span>
+        <div class="hand-label">Protéines</div>
+        <div class="hand-value">1-2 paumes</div>
+      </div>
+      <div class="hand-card">
+        <span class="hand-emoji">✊</span>
+        <div class="hand-label">Légumes</div>
+        <div class="hand-value">2 poings</div>
+      </div>
+      <div class="hand-card">
+        <span class="hand-emoji">👊</span>
+        <div class="hand-label">Féculents</div>
+        <div class="hand-value">1 poing</div>
+      </div>
+      <div class="hand-card">
+        <span class="hand-emoji">👍</span>
+        <div class="hand-label">Gras</div>
+        <div class="hand-value">1 pouce</div>
+      </div>
+    </div>
+
+    <div class="section-title">Tes repas dans la journée</div>
+    <div class="food-grid">
+      <div class="food-card">
+        <div class="food-icon">🌅</div>
+        <div class="food-info">
+          <div class="food-meal">7h30 — Après l'entraînement</div>
+          <div class="food-desc">3-4 œufs + fruit + café/thé sans sucre</div>
+        </div>
+      </div>
+      <div class="food-card">
+        <div class="food-icon">☀️</div>
+        <div class="food-info">
+          <div class="food-meal">12h30 — Repas principal</div>
+          <div class="food-desc">Plat africain adapté · protéine + légumes d'abord dans l'assiette</div>
+        </div>
+      </div>
+      <div class="food-card">
+        <div class="food-icon">🌿</div>
+        <div class="food-info">
+          <div class="food-meal">16h — Collation (si faim)</div>
+          <div class="food-desc">Cacahuètes non salées OU fruit OU yaourt nature</div>
+        </div>
+      </div>
+      <div class="food-card">
+        <div class="food-icon">🌙</div>
+        <div class="food-info">
+          <div class="food-meal">19h — Dîner léger</div>
+          <div class="food-desc">Moins de féculents qu'à midi · protéine + légumes</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Plats ivoiriens — Comment adapter</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="food-card">
+        <div class="food-icon">✅</div>
+        <div class="food-info">
+          <div class="food-meal">À privilégier</div>
+          <div class="food-desc">Kedjenou · Poulet braisé (sans peau) · Tilapia grillé · Sauce graine allégée</div>
+        </div>
+      </div>
+      <div class="food-card">
+        <div class="food-icon">⚖️</div>
+        <div class="food-info">
+          <div class="food-meal">À adapter (quantité)</div>
+          <div class="food-desc">Riz sauce → 1 poing de riz max · Attiéké → portion réduite + poisson · Foutou → petite portion</div>
+        </div>
+      </div>
+      <div class="food-card">
+        <div class="food-icon">🚦</div>
+        <div class="food-info">
+          <div class="food-meal">Avec modération (1x/semaine)</div>
+          <div class="food-desc">Aloco frit · Plats très huile · Boissons sucrées → remplacer par bissap sans sucre</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>Règle anti-fringale :</strong> Si t'as faim entre les repas, bois d'abord un grand verre d'eau. Attends 10 minutes. Si c'est encore là, mange la collation.
+    </div>
+
+  </div>
+</div>
+
+<!-- TAB : MONTRE -->
+<div id="tab-montre" class="tab-content">
+  <div class="content">
+
+    <div class="section-title">Alarmes à programmer</div>
+    <div class="alert-list">
+      <div class="alert-item">
+        <div class="alert-time">07:00</div>
+        <div class="alert-desc">⏰ Réveil — Bois 1 grand verre d'eau</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-time">07:10</div>
+        <div class="alert-desc">🏃 Début entraînement (à jeun)</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-time">08:15</div>
+        <div class="alert-desc">🍳 Petit-déjeuner protéiné</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-time">12:30</div>
+        <div class="alert-desc">🍽️ Repas principal — méthode de la main</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-time">16:00</div>
+        <div class="alert-desc">💧 Hydratation check — collation si faim</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-time">19:00</div>
+        <div class="alert-desc">🌙 Dîner léger — féculents minimum</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-time">22:30</div>
+        <div class="alert-desc">😴 Coucher — 8h de sommeil = récupération musculaire</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:24px">Suivi hebdomadaire</div>
+    <div class="alert-list">
+      <div class="alert-item">
+        <div class="alert-time" style="min-width:80px;font-size:11px">Lun matin</div>
+        <div class="alert-desc">⚖️ Poids à jeun (même heure, même conditions)</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-time" style="min-width:80px;font-size:11px">1x/mois</div>
+        <div class="alert-desc">📸 Photo progress (même lumière, même position)</div>
+      </div>
+      <div class="alert-item">
+        <div class="alert-time" style="min-width:80px;font-size:11px">1x/mois</div>
+        <div class="alert-desc">📏 Tour de taille avec mètre ruban</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:24px">Objectifs de ta montre</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="time-block green">
+        <div class="tb-body">
+          <div class="tb-title">💧 Hydratation</div>
+          <div class="tb-detail">Vise 2,5L/jour. Active les rappels toutes les 2h sur ta montre.</div>
+        </div>
+      </div>
+      <div class="time-block orange">
+        <div class="tb-body">
+          <div class="tb-title">❤️ Fréquence cardiaque</div>
+          <div class="tb-detail">Pendant l'entraînement, reste entre 130-160 bpm pour bruler du gras efficacement.</div>
+        </div>
+      </div>
+      <div class="time-block blue">
+        <div class="tb-body">
+          <div class="tb-title">🚶 Pas quotidiens</div>
+          <div class="tb-detail">Minimum 8 000 pas/jour, même les jours de repos. La marche brûle sans abîmer.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TAB : SUIVI -->
+<div id="tab-suivi" class="tab-content">
+  <div class="content">
+
+    <!-- POIDS -->
+    <div class="section-title">⚖️ Poids & Mensurations</div>
+    <div style="background:var(--card);border-radius:14px;padding:16px;margin-bottom:8px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">Poids (kg)</div>
+          <input id="input-poids" type="number" step="0.1" placeholder="ex: 104.5"
+            style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:15px;font-family:var(--font-mono);">
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:5px;">Tour de taille (cm)</div>
+          <input id="input-taille" type="number" step="0.5" placeholder="ex: 98"
+            style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);font-size:15px;font-family:var(--font-mono);">
+        </div>
+      </div>
+      <div id="graisse-info" style="font-size:12px;color:var(--muted);margin-bottom:12px;min-height:18px;"></div>
+      <button onclick="saveMesures()" style="width:100%;background:var(--accent);color:#0f0f0f;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;">
+        Enregistrer aujourd'hui
+      </button>
+    </div>
+
+    <!-- GRAPHIQUE POIDS -->
+    <div class="section-title" style="margin-top:20px;">📈 Évolution — 4 semaines</div>
+    <div style="background:var(--card);border-radius:14px;padding:16px;overflow:hidden;">
+      <canvas id="chart-poids" height="140" style="width:100%;display:block;"></canvas>
+      <div id="chart-empty" style="text-align:center;color:var(--muted);font-size:13px;padding:20px 0;display:none;">
+        Pas encore de données. Enregistre ton poids pour commencer !
+      </div>
+    </div>
+
+    <!-- SÉANCES SEMAINE EN COURS -->
+    <div class="section-title" style="margin-top:20px;">✅ Séances — Semaine en cours</div>
+    <div id="seances-semaine" style="display:flex;flex-direction:column;gap:8px;"></div>
+
+    <!-- HISTORIQUE -->
+    <div class="section-title" style="margin-top:20px;">📋 Historique séances</div>
+    <div id="historique-seances" style="display:flex;flex-direction:column;gap:8px;"></div>
+
+    <!-- STATS -->
+    <div class="section-title" style="margin-top:20px;">🏆 Stats 4 semaines</div>
+    <div id="stats-box" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+
+    <!-- MODAL NOTES -->
+    <div id="notes-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;align-items:flex-end;justify-content:center;">
+      <div style="background:var(--card);border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:500px;border-top:1px solid var(--border);">
+        <div style="font-size:16px;font-weight:700;margin-bottom:4px;" id="modal-title">Notes séance</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:12px;" id="modal-date"></div>
+        <textarea id="modal-notes" rows="4" placeholder="Comment s'est passée la séance ? Exercices modifiés, fatigue, progrès..."
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;color:var(--text);font-size:14px;font-family:var(--font-main);resize:none;"></textarea>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button onclick="closeNotesModal()" style="flex:1;background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:14px;cursor:pointer;">Annuler</button>
+          <button onclick="saveNotes()" style="flex:2;background:var(--accent);color:#0f0f0f;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const days = [
+  {
+    name: "Lundi — Haut du corps 💪",
+    timeline: [
+      { time: "07:00", emoji: "💧", title: "Réveil + eau", detail: "Grand verre d'eau dès le lever. Prépare ton tapis.", color: "blue" },
+      { time: "07:10", emoji: "🔥", title: "Échauffement (5 min)", detail: "Rotations des épaules, jumping jacks, neck rolls", color: "orange" },
+      { time: "07:15", emoji: "💪", title: "Séance haut du corps (40 min)", detail: "Voir les exercices ci-dessous", color: "green" },
+      { time: "07:55", emoji: "🧘", title: "Retour au calme (5 min)", detail: "Étirements épaules, pectoraux, triceps", color: "muted" },
+      { time: "08:05", emoji: "🍳", title: "Petit-déjeuner protéiné", detail: "3-4 œufs + fruit + café sans sucre", color: "orange" },
+    ],
+    exercises: [
+      { name: "Pompes classiques", sets: "3 × 8-10" },
+      { name: "Pompes inclinées (pieds sur chaise)", sets: "3 × 6-8" },
+      { name: "Dips sur chaise", sets: "3 × 8-10" },
+      { name: "Superman (dos)", sets: "3 × 12" },
+      { name: "Planche isométrique", sets: "3 × 25 sec" },
+    ]
+  },
+  {
+    name: "Mardi — Mini-séance 🔥",
+    timeline: [
+      { time: "07:00", emoji: "💧", title: "Réveil + eau", detail: "Journée légère, mais on bouge quand même.", color: "blue" },
+      { time: "07:10", emoji: "🔥", title: "Mini-séance (15-20 min)", detail: "Voir les exercices ci-dessous", color: "orange" },
+      { time: "07:30", emoji: "🍳", title: "Petit-déjeuner", detail: "Même routine alimentaire", color: "green" },
+    ],
+    exercises: [
+      { name: "Pompes — max", sets: "3 × max" },
+      { name: "Planche", sets: "3 × 30 sec" },
+      { name: "Squats", sets: "3 × 15" },
+      { name: "Montées de genoux sur place", sets: "3 × 20" },
+    ]
+  },
+  {
+    name: "Mercredi — Bas du corps 💪",
+    timeline: [
+      { time: "07:00", emoji: "💧", title: "Réveil + eau", detail: "Grand verre d'eau. On attaque les jambes aujourd'hui.", color: "blue" },
+      { time: "07:10", emoji: "🔥", title: "Échauffement (5 min)", detail: "Leg swings, fentes statiques, rotations hanches", color: "orange" },
+      { time: "07:15", emoji: "💪", title: "Séance bas du corps (40 min)", detail: "Voir les exercices ci-dessous", color: "green" },
+      { time: "07:55", emoji: "🧘", title: "Retour au calme", detail: "Étirements quadriceps, ischio, mollets", color: "muted" },
+      { time: "08:05", emoji: "🍳", title: "Petit-déjeuner", detail: "3-4 œufs + fruit + café sans sucre", color: "orange" },
+    ],
+    exercises: [
+      { name: "Squats poids du corps", sets: "3 × 15" },
+      { name: "Fentes alternées", sets: "3 × 10/jambe" },
+      { name: "Pont fessier", sets: "3 × 15" },
+      { name: "Crunchs vélo", sets: "3 × 20" },
+      { name: "Gainage latéral", sets: "3 × 20 sec/côté" },
+    ]
+  },
+  {
+    name: "Jeudi — Salle ou Repos actif 🏋🏾",
+    timeline: [
+      { time: "07:00", emoji: "💧", title: "Réveil + eau", detail: "Si t'as la salle : parfait. Sinon : marche 30-45 min.", color: "blue" },
+      { time: "07:30", emoji: "🏋🏾", title: "Salle de sport (si dispo)", detail: "Dos + tractions + développé couché avec charges", color: "green" },
+      { time: "07:30", emoji: "🚶", title: "OU marche rapide (si pas de salle)", detail: "30-45 min à rythme soutenu. 8 000 pas minimum.", color: "orange" },
+      { time: "08:30", emoji: "🍳", title: "Petit-déjeuner", detail: "Repas protéiné post-effort", color: "muted" },
+    ],
+    exercises: [
+      { name: "Lat pulldown / Tractions", sets: "4 × 8-10" },
+      { name: "Rowing barre ou haltères", sets: "3 × 10" },
+      { name: "Développé couché", sets: "4 × 8" },
+      { name: "Leg press", sets: "3 × 12" },
+      { name: "Abdos câble ou planche lestée", sets: "3 × 15" },
+    ]
+  },
+  {
+    name: "Vendredi — Full body 💪",
+    timeline: [
+      { time: "07:00", emoji: "💧", title: "Réveil + eau", detail: "Dernière grosse séance de la semaine.", color: "blue" },
+      { time: "07:10", emoji: "🔥", title: "Échauffement (5 min)", detail: "Jumping jacks + mobilité globale", color: "orange" },
+      { time: "07:15", emoji: "💪", title: "Full body callisthénie (45 min)", detail: "Circuit complet — voir les exercices", color: "green" },
+      { time: "08:00", emoji: "🧘", title: "Étirements", detail: "5-10 min étirements complets", color: "muted" },
+      { time: "08:10", emoji: "🍳", title: "Petit-déjeuner", detail: "Repas protéiné — tu le mérites", color: "orange" },
+    ],
+    exercises: [
+      { name: "Burpees", sets: "3 × 8" },
+      { name: "Pompes", sets: "3 × max" },
+      { name: "Squats sautés", sets: "3 × 12" },
+      { name: "Dips sur chaise", sets: "3 × 10" },
+      { name: "Mountain climbers", sets: "3 × 30 sec" },
+      { name: "Planche + gainage latéral", sets: "3 × 20 sec chaque" },
+    ]
+  },
+  {
+    name: "Samedi — Salle ou séance légère 🏋🏾",
+    timeline: [
+      { time: "07:30", emoji: "💧", title: "Réveil un peu plus tard", detail: "Week-end = on se donne de la marge.", color: "blue" },
+      { time: "08:00", emoji: "🏋🏾", title: "Salle (si dispo)", detail: "Même programme que jeudi ou séance libre.", color: "green" },
+      { time: "08:00", emoji: "💪", title: "OU Séance légère maison", detail: "30 min. Pompes, squats, gainage. Pas de pression.", color: "orange" },
+      { time: "09:00", emoji: "🍳", title: "Brunch / Petit-déj", detail: "Repas tranquille. Rester dans les bonnes habitudes.", color: "muted" },
+    ],
+    exercises: [
+      { name: "Choix libre selon l'énergie", sets: "—" },
+      { name: "Minimum : 3 × pompes max", sets: "3 × max" },
+      { name: "Minimum : 3 × 30 sec planche", sets: "3 × 30 sec" },
+    ]
+  },
+  {
+    name: "Dimanche — Repos complet 😴",
+    timeline: [],
+    exercises: [],
+    rest: true
+  }
+];
+
+let currentDay = 0;
+
+function showDay(idx) {
+  currentDay = idx;
+  // update day buttons
+  document.querySelectorAll('.day-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', i === idx);
+  });
+
+  const day = days[idx];
+  document.getElementById('day-content').textContent = day.name;
+
+  // Build timeline
+  const tl = document.getElementById('day-timeline');
+  if (day.rest) {
+    tl.innerHTML = `
+      <div class="rest-card">
+        <span class="rest-emoji">😴</span>
+        <div class="rest-title">Repos complet</div>
+        <div class="rest-sub">Le corps reconstruit le muscle pendant le repos, pas pendant l'effort.<br><br>Dors bien. Mange bien. Hydrate-toi. Prépare ta semaine dans ta tête.</div>
+      </div>`;
+    document.getElementById('day-exercises').innerHTML = '';
+    return;
+  }
+
+  tl.innerHTML = `<div class="timeline">${day.timeline.map(t => `
+    <div class="time-block ${t.color}">
+      <div class="tb-time">${t.time}</div>
+      <div class="tb-emoji">${t.emoji}</div>
+      <div class="tb-body">
+        <div class="tb-title">${t.title}</div>
+        <div class="tb-detail">${t.detail}</div>
+      </div>
+    </div>`).join('')}</div>`;
+
+  // Build exercises
+  const ex = document.getElementById('day-exercises');
+  if (day.exercises.length > 0) {
+    ex.innerHTML = `
+      <div class="section-title" style="margin-top:20px">Exercices du jour</div>
+      <div class="ex-list">${day.exercises.map(e => `
+        <div class="ex-item">
+          <div class="ex-name">${e.name}</div>
+          <div class="ex-sets">${e.sets}</div>
+        </div>`).join('')}
+      </div>
+      <div class="tip-box" style="margin-top:12px">
+        <strong>Repos entre séries :</strong> 45-60 sec les exercices faciles · 90 sec les exercices durs. Si tu peux parler normalement pendant l'effort, augmente l'intensité.
+      </div>`;
+  } else {
+    ex.innerHTML = '';
+  }
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tabName).classList.add('active');
+  event.target.classList.add('active');
+
+  if (tabName === 'jour') showDay(currentDay);
+  if (tabName === 'suivi') initSuivi();
+}
+
+// ============================================================
+// SUIVI — localStorage
+// ============================================================
+
+const JOURS_NOMS = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+const JOURS_TYPES = ['Haut du corps 💪','Mini-séance 🔥','Bas du corps 💪','Salle 🏋🏾','Full body 💪','Salle / Léger 🏋🏾','Repos 😴'];
+
+function todayKey() {
+  const d = new Date();
+  return d.toISOString().slice(0,10); // YYYY-MM-DD
+}
+
+function getWeekKey(date) {
+  const d = new Date(date);
+  const day = d.getDay() === 0 ? 7 : d.getDay(); // lundi=1
+  d.setDate(d.getDate() - day + 1);
+  return d.toISOString().slice(0,10);
+}
+
+function loadData(key) {
+  try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e) { return null; }
+}
+function saveData(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+}
+
+// --- POIDS ---
+function estimerGraisse(poidsKg, tourTailleCm) {
+  // Formule Navy simplifiée homme (sans cou) : approximation
+  // % graisse ≈ (tourTaille - 0.35 * poids - 10) / poids * 100 → version simple
+  // On utilise la formule BMI-based pour rester simple
+  const h = 1.89;
+  const bmi = poidsKg / (h * h);
+  const age = 23;
+  const gras = (1.20 * bmi) + (0.23 * age) - 16.2;
+  return Math.max(5, Math.min(50, gras)).toFixed(1);
+}
+
+document.getElementById('input-taille').addEventListener('input', updateGraissePreview);
+document.getElementById('input-poids').addEventListener('input', updateGraissePreview);
+
+function updateGraissePreview() {
+  const p = parseFloat(document.getElementById('input-poids').value);
+  const t = parseFloat(document.getElementById('input-taille').value);
+  const el = document.getElementById('graisse-info');
+  if (p > 0) {
+    const g = estimerGraisse(p, t || 0);
+    el.innerHTML = `<span style="color:var(--accent)">~${g}% graisse estimé</span> <span style="color:var(--muted)">(formule BMI — indicatif)</span>`;
+  } else {
+    el.textContent = '';
+  }
+}
+
+function saveMesures() {
+  const p = parseFloat(document.getElementById('input-poids').value);
+  const t = parseFloat(document.getElementById('input-taille').value);
+  if (!p) { alert('Entre ton poids !'); return; }
+  const key = todayKey();
+  const existing = loadData('mesures') || {};
+  existing[key] = { poids: p, taille: t || null, graisse: estimerGraisse(p, t || 0) };
+  saveData('mesures', existing);
+  document.getElementById('input-poids').value = '';
+  document.getElementById('input-taille').value = '';
+  document.getElementById('graisse-info').textContent = '';
+  renderChart();
+  renderStats();
+  showToast('✅ Enregistré !');
+}
+
+function renderChart() {
+  const mesures = loadData('mesures') || {};
+  const canvas = document.getElementById('chart-poids');
+  const empty = document.getElementById('chart-empty');
+  const keys = Object.keys(mesures).sort().slice(-28);
+
+  if (keys.length === 0) {
+    canvas.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  canvas.style.display = 'block';
+  empty.style.display = 'none';
+
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth || 300;
+  canvas.width = W * window.devicePixelRatio;
+  canvas.height = 140 * window.devicePixelRatio;
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  const w = W, h = 140;
+
+  const vals = keys.map(k => mesures[k].poids);
+  const minV = Math.min(...vals) - 2;
+  const maxV = Math.max(...vals) + 2;
+  const pad = { t:16, b:28, l:40, r:12 };
+  const gw = w - pad.l - pad.r;
+  const gh = h - pad.t - pad.b;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Grid lines
+  ctx.strokeStyle = '#2a2a2a';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (gh / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + gw, y); ctx.stroke();
+    const label = (maxV - ((maxV - minV) / 4) * i).toFixed(1);
+    ctx.fillStyle = '#555';
+    ctx.font = `10px var(--font-mono, monospace)`;
+    ctx.textAlign = 'right';
+    ctx.fillText(label, pad.l - 4, y + 4);
+  }
+
+  // Line
+  ctx.beginPath();
+  ctx.strokeStyle = '#C8F550';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  vals.forEach((v, i) => {
+    const x = pad.l + (i / Math.max(vals.length - 1, 1)) * gw;
+    const y = pad.t + gh - ((v - minV) / (maxV - minV)) * gh;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Dots
+  vals.forEach((v, i) => {
+    const x = pad.l + (i / Math.max(vals.length - 1, 1)) * gw;
+    const y = pad.t + gh - ((v - minV) / (maxV - minV)) * gh;
+    ctx.beginPath();
+    ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#C8F550';
+    ctx.fill();
+  });
+
+  // X labels (show first and last)
+  ctx.fillStyle = '#555';
+  ctx.font = `10px var(--font-mono, monospace)`;
+  ctx.textAlign = 'center';
+  if (keys.length > 0) {
+    ctx.fillText(keys[0].slice(5), pad.l, h - 6);
+    if (keys.length > 1) ctx.fillText(keys[keys.length-1].slice(5), pad.l + gw, h - 6);
+  }
+}
+
+// --- SÉANCES ---
+let currentModalKey = null;
+
+function getSeancesWeek() {
+  const today = new Date();
+  const dayOfWeek = today.getDay() === 0 ? 7 : today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - dayOfWeek + 1);
+  const seances = loadData('seances') || {};
+  const week = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const key = d.toISOString().slice(0,10);
+    const isPast = d <= today;
+    week.push({ key, jour: JOURS_NOMS[i], type: JOURS_TYPES[i], isPast, data: seances[key] || null });
+  }
+  return week;
+}
+
+function renderSeances() {
+  const week = getSeancesWeek();
+  const container = document.getElementById('seances-semaine');
+  container.innerHTML = week.map(s => {
+    const isRest = s.jour === 'Dim';
+    const status = s.data ? (s.data.fait ? 'fait' : 'manque') : null;
+    const bgColor = status === 'fait' ? 'rgba(200,245,80,0.08)' : status === 'manque' ? 'rgba(255,107,53,0.08)' : 'var(--card)';
+    const borderColor = status === 'fait' ? 'var(--accent)' : status === 'manque' ? 'var(--accent2)' : 'var(--border)';
+    return `
+    <div style="background:${bgColor};border:1px solid ${borderColor};border-radius:12px;padding:12px 14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${s.data?.notes ? '8px' : '0'}">
+        <div>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-right:8px;">${s.jour}</span>
+          <span style="font-size:13px;font-weight:500;">${s.type}</span>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          ${!isRest && s.isPast ? `
+            <button onclick="toggleSeance('${s.key}', true)" style="background:${status==='fait'?'var(--accent)':'var(--card2)'};color:${status==='fait'?'#0f0f0f':'var(--muted)'};border:1px solid ${status==='fait'?'var(--accent)':'var(--border)'};border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;">✓</button>
+            <button onclick="toggleSeance('${s.key}', false)" style="background:${status==='manque'?'var(--accent2)':'var(--card2)'};color:${status==='manque'?'#fff':'var(--muted)'};border:1px solid ${status==='manque'?'var(--accent2)':'var(--border)'};border-radius:8px;padding:5px 10px;font-size:13px;cursor:pointer;">✗</button>
+            <button onclick="openNotesModal('${s.key}', '${s.jour} ${s.type}')" style="background:var(--card2);color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:5px 8px;font-size:13px;cursor:pointer;">📝</button>
+          ` : isRest ? `<span style="font-size:12px;color:var(--muted);">Repos</span>` : `<span style="font-size:12px;color:var(--muted);">À venir</span>`}
+        </div>
+      </div>
+      ${s.data?.notes ? `<div style="font-size:12px;color:var(--muted);background:var(--card2);border-radius:8px;padding:8px 10px;line-height:1.5;">${s.data.notes}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function toggleSeance(key, fait) {
+  const seances = loadData('seances') || {};
+  if (!seances[key]) seances[key] = {};
+  seances[key].fait = fait;
+  saveData('seances', seances);
+  renderSeances();
+  renderHistorique();
+  renderStats();
+}
+
+function openNotesModal(key, titre) {
+  currentModalKey = key;
+  const seances = loadData('seances') || {};
+  document.getElementById('modal-title').textContent = titre;
+  document.getElementById('modal-date').textContent = key;
+  document.getElementById('modal-notes').value = seances[key]?.notes || '';
+  const modal = document.getElementById('notes-modal');
+  modal.style.display = 'flex';
+  setTimeout(() => document.getElementById('modal-notes').focus(), 100);
+}
+
+function closeNotesModal() {
+  document.getElementById('notes-modal').style.display = 'none';
+  currentModalKey = null;
+}
+
+function saveNotes() {
+  if (!currentModalKey) return;
+  const seances = loadData('seances') || {};
+  if (!seances[currentModalKey]) seances[currentModalKey] = {};
+  seances[currentModalKey].notes = document.getElementById('modal-notes').value;
+  saveData('seances', seances);
+  closeNotesModal();
+  renderSeances();
+  renderHistorique();
+  showToast('📝 Notes sauvegardées !');
+}
+
+function renderHistorique() {
+  const seances = loadData('seances') || {};
+  const keys = Object.keys(seances).sort().reverse().slice(0, 28);
+  const container = document.getElementById('historique-seances');
+  if (keys.length === 0) {
+    container.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:16px;">Aucune séance enregistrée</div>';
+    return;
+  }
+  // Group by week
+  const weekMap = {};
+  keys.forEach(k => {
+    const wk = getWeekKey(k);
+    if (!weekMap[wk]) weekMap[wk] = [];
+    weekMap[wk].push(k);
+  });
+  container.innerHTML = Object.keys(weekMap).sort().reverse().map(wk => {
+    const days = weekMap[wk];
+    const fait = days.filter(k => seances[k]?.fait).length;
+    const manque = days.filter(k => seances[k] && !seances[k].fait).length;
+    return `
+    <div style="background:var(--card);border-radius:12px;padding:12px 14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-family:var(--font-mono);font-size:11px;color:var(--muted);">Sem. du ${wk}</span>
+        <span style="font-size:12px;"><span style="color:var(--accent);">✓${fait}</span> <span style="color:var(--accent2);">✗${manque}</span></span>
+      </div>
+      <div style="display:flex;gap:4px;">
+        ${days.map(k => {
+          const s = seances[k];
+          const d = new Date(k);
+          const label = ['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'][d.getDay()];
+          const color = s?.fait ? 'var(--accent)' : 'var(--accent2)';
+          const bg = s?.fait ? 'rgba(200,245,80,0.12)' : 'rgba(255,107,53,0.12)';
+          return `<div style="flex:1;background:${bg};border-radius:6px;padding:5px 2px;text-align:center;">
+            <div style="font-size:9px;color:var(--muted);">${label}</div>
+            <div style="font-size:14px;">${s?.fait ? '✓' : '✗'}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderStats() {
+  const seances = loadData('seances') || {};
+  const mesures = loadData('mesures') || {};
+  const allKeys = Object.keys(seances).sort().slice(-28);
+  const fait = allKeys.filter(k => seances[k]?.fait).length;
+  const total = allKeys.filter(k => seances[k] !== null).length;
+  const taux = total > 0 ? Math.round(fait / total * 100) : 0;
+
+  const mesureKeys = Object.keys(mesures).sort();
+  let delta = '—';
+  if (mesureKeys.length >= 2) {
+    const diff = mesures[mesureKeys[mesureKeys.length-1]].poids - mesures[mesureKeys[0]].poids;
+    delta = (diff >= 0 ? '+' : '') + diff.toFixed(1) + ' kg';
+  }
+  const lastPoids = mesureKeys.length > 0 ? mesures[mesureKeys[mesureKeys.length-1]].poids + ' kg' : '—';
+
+  document.getElementById('stats-box').innerHTML = `
+    <div style="background:var(--card);border-radius:12px;padding:14px;text-align:center;">
+      <div style="font-size:24px;font-weight:700;color:var(--accent);">${taux}%</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;">Assiduité</div>
+    </div>
+    <div style="background:var(--card);border-radius:12px;padding:14px;text-align:center;">
+      <div style="font-size:24px;font-weight:700;color:var(--accent);">${fait}/${total}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;">Séances faites</div>
+    </div>
+    <div style="background:var(--card);border-radius:12px;padding:14px;text-align:center;">
+      <div style="font-size:24px;font-weight:700;color:var(--text);">${lastPoids}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;">Dernier poids</div>
+    </div>
+    <div style="background:var(--card);border-radius:12px;padding:14px;text-align:center;">
+      <div style="font-size:24px;font-weight:700;color:${delta.startsWith('-') ? 'var(--accent)' : delta === '—' ? 'var(--muted)' : 'var(--accent2)'};">${delta}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px;">Évolution</div>
+    </div>`;
+}
+
+function initSuivi() {
+  renderSeances();
+  renderHistorique();
+  renderStats();
+  renderChart();
+}
+
+// Toast notification
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--accent);color:#0f0f0f;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:9999;transition:opacity 0.3s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2000);
+}
+
+
+function showInstallHelp() {
+  const popup = document.getElementById('install-popup');
+  popup.style.display = 'flex';
+}
+
+// Hide banner if already installed (standalone mode)
+if (window.navigator.standalone === true) {
+  document.getElementById('install-banner').style.display = 'none';
+}
+
+// Init
+showDay(0);
+</script>
+</body>
+</html>
